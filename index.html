@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>مجموعة Resident Evil</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            min-height: 100%;
+            background: #0b0d10;
+            color: #f1f1f1;
+            font-family: Arial, Tahoma, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            background:
+                radial-gradient(circle at 15% 5%, rgba(180, 20, 20, .15), transparent 24%),
+                radial-gradient(circle at 88% 8%, rgba(255, 50, 50, .09), transparent 25%),
+                linear-gradient(180deg, #0b0c12 0%, #0b0d10 55%, #090a0d 100%);
+        }
+
+        .app {
+            width: 100%;
+            max-width: 520px;
+            min-height: 100vh;
+            background:
+                linear-gradient(rgba(15,17,21,.96), rgba(15,17,21,.98)),
+                repeating-linear-gradient(135deg, rgba(255,255,255,.018) 0, rgba(255,255,255,.018) 1px, transparent 1px, transparent 9px);
+            padding: 18px 14px 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .app::before {
+            content: "RE";
+            position: fixed;
+            left: 50%;
+            bottom: 6%;
+            transform: translateX(-50%) rotate(-8deg);
+            font-size: min(32vw, 170px);
+            font-weight: 1000;
+            letter-spacing: -.08em;
+            color: rgba(255, 0, 0, 0.025);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .main-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* ===== الهوية ===== */
+        .header-tarantul {
+            text-align: center;
+            padding: 8px 0 12px;
+            border-bottom: 1px solid #372b2b;
+            margin-bottom: 2px;
+            position: relative;
+        }
+
+        .header-tarantul::after {
+            content: "";
+            display: block;
+            width: 110px;
+            height: 3px;
+            margin: 9px auto 0;
+            border-radius: 5px;
+            background: linear-gradient(90deg, #ff4f4f, #ff9b3d, #8c0000);
+        }
+
+        .header-tarantul .brand-logo {
+            width: min(55vw, 190px);
+            max-height: 65px;
+            object-fit: contain;
+        }
+
+        .header-tarantul .brand {
+            display: block;
+            margin-top: 5px;
+            font-size: clamp(1.15rem, 5vw, 1.55rem);
+            font-weight: 900;
+            letter-spacing: .05em;
+            color: #fff;
+            text-shadow: 2px 2px 0 #8b3d3d, 0 0 14px rgba(255, 79, 79, 0.2);
+        }
+
+        /* ===== بطاقة اللعبة ===== */
+        .game-card {
+            width: 100%;
+            background: #15181d;
+            border: 1px solid #292d35;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: border-color .18s ease;
+            position: relative;
+        }
+
+        .game-card::before {
+            content: "";
+            display: block;
+            height: 2px;
+            background: linear-gradient(90deg, #dd2c2c, #ff7547, #8c0000);
+            opacity: .65;
+        }
+
+        .game-card-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        .game-card-top:active {
+            background: #1a1e24;
+        }
+
+        .game-icon {
+            flex: 0 0 64px;
+            width: 64px;
+            height: 64px;
+            border-radius: 9px;
+            overflow: hidden;
+            background: #20242a;
+            border: 1px solid #303640;
+        }
+
+        .game-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .game-info {
+            flex: 1;
+            min-width: 0;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .game-info .name {
+            font-size: clamp(.88rem, 3.5vw, 1.05rem);
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.25;
+        }
+
+        .game-info .name .highlight {
+            color: #ff5555;
+            font-size: .9em;
+        }
+
+        .game-info .sub {
+            margin-top: 4px;
+            font-size: .72rem;
+            color: #858c96;
+        }
+
+        .game-arrow {
+            flex: 0 0 auto;
+            color: #7f8792;
+            font-size: .9rem;
+        }
+
+        /* ===== الوصف ===== */
+        .game-description {
+            max-height: 0;
+            overflow: hidden;
+            padding: 0 12px;
+            background: #111419;
+            transition: max-height .3s ease, padding .3s ease;
+            direction: rtl;
+            text-align: right;
+        }
+
+        .game-description.open {
+            max-height: 500px;
+            padding: 12px;
+            border-top: 1px solid #252a32;
+        }
+
+        .game-description .desc-text {
+            font-size: .78rem;
+            color: #b8bec7;
+            line-height: 1.7;
+            margin-bottom: 10px;
+        }
+
+        /* ===== زر التحميل ===== */
+        .desc-link {
+            display: block;
+            width: 100%;
+            text-align: center;
+            background: linear-gradient(90deg, #b81d1d, #e04343);
+            padding: 9px 10px;
+            border-radius: 7px;
+            font-size: .78rem;
+            font-weight: 800;
+            color: #fff;
+            text-decoration: none;
+            margin-top: 6px;
+            box-shadow: 0 4px 14px rgba(184, 29, 29, 0.2);
+        }
+
+        .desc-link.emu-link {
+            background: linear-gradient(90deg, #2b78e4, #1d4ed8);
+            box-shadow: 0 4px 14px rgba(43, 120, 228, 0.2);
+        }
+
+        .desc-link:active {
+            filter: brightness(.88);
+        }
+
+        /* ===== تنبيه المحاكيات ===== */
+        .emulator-note {
+            margin-top: 8px;
+            margin-bottom: 8px;
+            padding: 8px 10px;
+            border: 1px solid rgba(255, 75, 75, 0.3);
+            border-radius: 7px;
+            background: rgba(255, 50, 50, 0.08);
+            color: #d9a7a7;
+            font-size: .7rem;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        .emulator-note strong {
+            color: #ff6b6b;
+        }
+
+        /* ===== الفاصل ===== */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding: 1px 20px;
+            opacity: .55;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #704b4b, transparent);
+        }
+
+        .divider-icon {
+            color: #d27a7a;
+            font-size: .7rem;
+        }
+
+        /* ===== التليجرام ===== */
+        .telegram-button {
+            position: fixed;
+            right: 12px;
+            bottom: 12px;
+            z-index: 2000;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #229ed9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 4px 14px rgba(0,0,0,.45);
+            border: 1px solid rgba(255,255,255,.15);
+        }
+
+        .telegram-button svg {
+            width: 22px;
+            height: 22px;
+            fill: #fff;
+        }
+
+        /* ===== الفوتر ===== */
+        .footer-tarantul {
+            text-align: center;
+            direction: ltr;
+            padding: 12px 0 2px;
+        }
+
+        .footer-tarantul .brand-small {
+            font-size: .68rem;
+            color: #8f8790;
+        }
+
+        /* ===== RESIDENT EVIL THEME ===== */
+        body {
+            background:
+                radial-gradient(circle at 50% -10%, rgba(150, 0, 0, .28), transparent 35%),
+                radial-gradient(circle at 10% 45%, rgba(80, 0, 0, .18), transparent 28%),
+                radial-gradient(circle at 90% 70%, rgba(110, 0, 0, .16), transparent 30%),
+                linear-gradient(180deg, #050607 0%, #0a0b0c 45%, #030404 100%);
+        }
+
+        .app {
+            background:
+                linear-gradient(rgba(7, 9, 10, .94), rgba(8, 9, 10, .98)),
+                repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0, rgba(255,255,255,.018) 1px, transparent 1px, transparent 4px),
+                repeating-linear-gradient(90deg, rgba(255,0,0,.012) 0, rgba(255,0,0,.012) 1px, transparent 1px, transparent 7px);
+        }
+
+        .app::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 999;
+            background:
+                linear-gradient(rgba(255,255,255,.012) 50%, transparent 50%);
+            background-size: 100% 4px;
+            opacity: .18;
+        }
+
+        .header-tarantul {
+            padding: 15px 8px 16px;
+            border-bottom: 1px solid #4a1717;
+        }
+
+        .header-tarantul::before {
+            content: "BIOHAZARD";
+            display: block;
+            color: #8e9a8e;
+            font-size: .58rem;
+            font-weight: 900;
+            letter-spacing: .38em;
+            margin-bottom: 9px;
+            text-shadow: 0 0 8px rgba(120,255,120,.12);
+        }
+
+        .header-tarantul::after {
+            width: 155px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #b31313, #e43b2f, #b31313, transparent);
+            box-shadow: 0 0 12px rgba(200,20,20,.45);
+        }
+
+        .header-tarantul .brand {
+            font-family: Georgia, "Times New Roman", serif;
+            letter-spacing: .12em;
+            text-shadow:
+                2px 2px 0 #260606,
+                0 0 8px rgba(190,20,20,.5),
+                0 0 22px rgba(120,0,0,.3);
+        }
+
+        .game-card {
+            background:
+                linear-gradient(135deg, rgba(28,31,32,.98), rgba(12,14,15,.98));
+            border: 1px solid #343738;
+            border-radius: 6px;
+            box-shadow:
+                0 7px 18px rgba(0,0,0,.42),
+                inset 0 0 0 1px rgba(255,255,255,.018);
+        }
+
+        .game-card::before {
+            height: 3px;
+            background: linear-gradient(90deg, #610707, #c51d1d, #f04b35, #7d0909, #310303);
+            opacity: .9;
+            box-shadow: 0 0 10px rgba(190,20,20,.22);
+        }
+
+        .game-card-top {
+            padding: 11px;
+        }
+
+        .game-card-top:active {
+            background: #191313;
+        }
+
+        .game-icon {
+            width: 67px;
+            height: 67px;
+            flex-basis: 67px;
+            border-radius: 5px;
+            border: 1px solid #4b4d4d;
+            box-shadow: 0 0 0 2px rgba(0,0,0,.35), 0 4px 10px rgba(0,0,0,.4);
+        }
+
+        .game-icon img {
+            filter: saturate(.92) contrast(1.08);
+        }
+
+        .game-info .name {
+            font-family: Georgia, "Times New Roman", serif;
+            letter-spacing: .025em;
+            text-shadow: 1px 1px 0 #000;
+        }
+
+        .game-info .name .highlight {
+            color: #d8322f;
+            text-shadow: 0 0 8px rgba(220,30,30,.28);
+        }
+
+        .game-info .sub {
+            color: #737979;
+            text-transform: uppercase;
+            letter-spacing: .12em;
+        }
+
+        .game-arrow {
+            color: #a33131;
+        }
+
+        .game-description {
+            background:
+                linear-gradient(180deg, #0b0d0e, #080909);
+            border-top-color: #351919;
+        }
+
+        .game-description .desc-text {
+            color: #aaaead;
+        }
+
+        .desc-link {
+            border: 1px solid rgba(255,255,255,.08);
+            background: linear-gradient(90deg, #680909, #b71919, #7d0909);
+            text-shadow: 1px 1px 0 rgba(0,0,0,.6);
+        }
+
+        .desc-link.emu-link {
+            background: linear-gradient(90deg, #263b4c, #315d78, #263b4c);
+        }
+
+        .emulator-note {
+            background:
+                linear-gradient(90deg, rgba(120,0,0,.08), rgba(255,45,45,.08), rgba(120,0,0,.08));
+            border-color: rgba(190,45,45,.28);
+            color: #b9a3a3;
+        }
+
+        .emulator-note strong {
+            color: #df4a45;
+        }
+
+        .divider-line {
+            background: linear-gradient(90deg, transparent, #632121, #a52c2c, #632121, transparent);
+        }
+
+        .divider-icon {
+            color: #b83b3b;
+        }
+
+        .telegram-button {
+            background: #171b1d;
+            border: 1px solid #4b4f50;
+            box-shadow: 0 4px 18px rgba(0,0,0,.6), 0 0 12px rgba(120,0,0,.15);
+        }
+
+        .footer-tarantul {
+            border-top: 1px solid #2a1616;
+            margin-top: 4px;
+            padding-top: 14px;
+        }
+
+        .footer-tarantul .brand-small {
+            color: #655d5d;
+            letter-spacing: .12em;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="app">
+        <!-- ===== زر قناة التليجرام ===== -->
+        <a class="telegram-button" href="https://t.me/mustafaGWZ" target="_blank" rel="noopener noreferrer" title="قناة مصطفى جيمرز">
+            <svg viewBox="0 0 24 24"><path d="M21.6 3.2 18.5 20c-.23 1.18-.87 1.47-1.76.92l-4.86-3.58-2.35 2.26c-.26.26-.48.48-.98.48l.35-4.96 9.03-8.16c.39-.35-.08-.55-.61-.2L6.16 13.7 1.39 12.2c-1.04-.33-1.06-1.04.22-1.53L20.25 3.1c.86-.32 1.62.2 1.35.1z"/></svg>
+        </a>
+
+        <div class="main-content">
+
+            <div class="header-tarantul">
+                <img class="brand-logo" src="tarantul_logo.png" alt="MUSTAFA GAMERS">
+                <div class="brand">MUSTAFA GAMERS</div>
+            </div>
+
+            <!-- 1. RESIDENT EVIL ZERO -->
+            <div class="game-card">
+                <div class="game-card-top" onclick="toggleDesc(this)">
+                    <div class="game-icon"><img src="https://i.ibb.co/jZ9DmRq8/IMG-20260817-015323-700.jpg" alt="RE Zero" loading="lazy"></div>
+                    <div class="game-info">
+                        <div class="name">Resident Evil <span class="highlight">Zero</span></div>
+                        <div class="sub">Capcom</div>
+                    </div>
+                    <div class="game-arrow">▼</div>
+                </div>
+                <div class="game-description">
+                    <div class="desc-text"><b>📖 الوصف:</b> بدايات تفشي الفيروس وكشف أسرار شركة أمبريلا مع ريبيكا وتشامبرز وبيلي كوين.</div>
+                    <a href="https://modsfire.com/9qGB3r6849ZxXrU" target="_blank" class="desc-link">📥 تحميل اللعبة</a>
+                </div>
+            </div>
+
+            <!-- 2. RESIDENT EVIL 1 -->
+            <div class="game-card">
+                <div class="game-card-top" onclick="toggleDesc(this)">
+                    <div class="game-icon"><img src="https://i.ibb.co/rRJydC8T/IMG-20260817-015420-531.jpg" alt="RE 1" loading="lazy"></div>
+                    <div class="game-info">
+                        <div class="name">Resident Evil <span class="highlight">1</span></div>
+                        <div class="sub">Capcom</div>
+                    </div>
+                    <div class="game-arrow">▼</div>
+                </div>
+                <div class="game-description">
+                    <div class="desc-text"><b>📖 الوصف:</b> الجزء الأول الأسطوري، استكشاف قصر سبنسر المليء بالمخاطر والزومبي.</div>
+                    <a href="https://modsfire.com/1uKM1p6jJvm5kWb" target="_blank" class="desc-link">📥 تحميل اللعبة</a>
+                </div>
+            </div>
+
+            <!-- 3. RESIDENT EVIL 2 -->
+            <div class="game-card">
+                <div class="game-card-top" onclick="toggleDesc(this)">
+                    <div class="game-icon"><img src="https://i.ibb.co/Dgkh0WH3/IMG-20260817-015954-807.jpg" alt="RE 2" loading="lazy"></div>
+                    <div class="game-info">
+                        <div class="name">Resident Evil <span class="highlight">2</span></div>
+                        <div class="sub">Capcom</div>
+                    </div>
+                    <div class="game-arrow">▼</div>
+                </div>
+                <div class="game-description">
+                    <div class="desc-text"><b>📖 الوصف:</b> أحداث مدينة راكون سيتي مع ليون كينيدي وكلير ريدفيلد.</div>
+                    <a href="https://modsfire.com/00Q3h3QkOYu7rz5" target="_blank" class="desc-link">📥 تحميل اللعبة</a>
+                </div>
+            </div>
+
+            <!-- 4. RESIDENT EVIL 3 -->
+            <div class="game-card">
+                <div class="game-card-top" onclick="toggleDesc(this)">
+                    <div class="game-icon"><img src="https://i.ibb.co/n8qKbwnV/IMG-20260817-015851-817.jpg" alt="RE 3" loading="lazy"></div>
+                    <div class="game-info">
+                        <div class="name">Resident Evil <span class="highlight">3 Nemesis</span></div>
+                        <div class="sub">Capcom</div>
+                    </div>
+                    <div class="game-arrow">▼</div>
+                </div>
+                <div class="game-description">
+                    <div class="desc-text"><b>📖 الوصف:</b> هروب جيل فالنتاين من مدينة راكون ومطاردة الوحش المرعب نيمسيس.</div>
+                    <a href="https://modsfire.com/Wmty8e4Kk36Qq0Y" target="_blank" class="desc-link">📥 تحميل اللعبة</a>
+                </div>
+            </div>
+
+            <!-- 5. RESIDENT EVIL 4 -->
+            <div class="game-card">
+                <div class="game-card-top" onclick="toggleDesc(this)">
+                    <div class="game-icon"><img src="https://i.ibb.co/39MzY1sB/IMG-20260817-015924-298.jpg" alt="RE 4" loading="lazy"></div>
+                    <div class="game-info">
+                        <div class="name">Resident Evil <span class="highlight">4</span></div>
+                        <div class="sub">Capcom</div>
+                    </div>
+                    <div class="game-arrow">▼</div>
+                </div>
+                <div class="game-description">
+                    <div class="desc-text"><b>📖 الوصف:</b> مهمة ليون لإنقاذ ابنة الرئيس في قرية إسبانية غامضة.</div>
+                    <a href="https://vexfile.com/download/Qz5JEBudz0" target="_blank" class="desc-link">📥 تحميل اللعبة</a>
+                </div>
+            </div>
+
+            <!-- 6. RESIDENT EVIL 5 -->
+            <div class="game-card">
+                <div class="game-card-top" onclick="toggleDesc(this)">
+                    <div class="game-icon"><img src="https://i.ibb.co/qLddPBFw/IMG-20260817-020228-227.jpg" alt="RE 5" loading="lazy"></div>
+                    <div class="game-info">
+                        <div class="name">Resident Evil <span class="highlight">5</span></div>
+                        <div class="sub">Capcom</div>
+                    </div>
+                    <div class="game-arrow">▼</div>
+                </div>
+                <div class="game-description">
+                    <div class="desc-text"><b>📖 الوصف:</b> كريس ريدفيلد وشيفا ألومار في مواجهة السلاح البيولوجي في إفريقيا.</div>
+                    <a href="https://www.mediafire.com/file/ttn6avzoqn5oghn/Resident+Evil+5+By+MUSTAFA+GAMERS.zip/file" target="_blank" class="desc-link">📥 تحميل اللعبة</a>
+                </div>
+            </div>
+
+            <!-- 7. RESIDENT EVIL DEAD AIM -->
+            <div class="game-card">
+                <div class="game-card-top" onclick="toggleDesc(this)">
+                    <div class="game-icon"><img src="https://i.ibb.co/S4NSWRkh/IMG-20260817-025745-470.jpg" alt="RE Dead Aim" loading="lazy"></div>
+                    <div class="game-info">
+                        <div class="name">Resident Evil <span class="highlight">Dead Aim</span></div>
+                        <div class="sub">Capcom</div>
+                    </div>
+                    <div class="game-arrow">▼</div>
+                </div>
+                <div class="game-description">
+                    <div class="desc-text"><b>📖 الوصف:</b> تجربة أكشن وإطلاق نار على متن سفينة محيطية موبوءة.</div>
+                    <a href="https://modsfire.com/w6uA1GfD2h165V1" target="_blank" class="desc-link">📥 تحميل اللعبة</a>
+                </div>
+            </div>
+
+            <!-- 8. RESIDENT EVIL CODE VERONICA -->
+            <div class="game-card">
+                <div class="game-card-top" onclick="toggleDesc(this)">
+                    <div class="game-icon"><img src="https://i.ibb.co/TD3CfM9X/IMG-20260817-025756-192.jpg" alt="RE Code Veronica" loading="lazy"></div>
+                    <div class="game-info">
+                        <div class="name">Resident Evil <span class="highlight">Code Veronica</span></div>
+                        <div class="sub">Capcom</div>
+                    </div>
+                    <div class="game-arrow">▼</div>
+                </div>
+                <div class="game-description">
+                    <div class="desc-text"><b>📖 الوصف:</b> مغامرة كلير ريدفيلد في جزيرة روكفورت بحثاً عن أخيها كريس.</div>
+                    <a href="https://modsfire.com/LH6Mrr051cCZWzs" target="_blank" class="desc-link">📥 تحميل اللعبة</a>
+                </div>
+            </div>
+
+            <!-- 9. RESIDENT EVIL 7 -->
+            <div class="game-card">
+                <div class="game-card-top" onclick="toggleDesc(this)">
+                    <div class="game-icon"><img src="https://i.ibb.co/whnY7kBk/IMG-20260817-025810-108.jpg" alt="RE 7" loading="lazy"></div>
+                    <div class="game-info">
+                        <div class="name">Resident Evil <span class="highlight">7 Biohazard</span></div>
+                        <div class="sub">Capcom</div>
+                    </div>
+                    <div class="game-arrow">▼</div>
+                </div>
+                <div class="game-description">
+                    <div class="desc-text"><b>📖 الوصف:</b> تجربة رعب المنظور الأول مع إيثان وينترز وعائلة بيكر المرعبة.</div>
+                    <div class="emulator-note">⚠️ <strong>ملاحظة:</strong> تعمل اللعبة عبر محاكي <strong>Gamehub</strong>.</div>
+                    <a href="https://gofile.io/d/F5KR62" target="_blank" class="desc-link">📥 تحميل اللعبة</a>
+                    <a href="https://modsfire.com/T2HbthaY8ma7v6f" target="_blank" class="desc-link emu-link">🎮 تحميل محاكي Gamehub</a>
+                </div>
+            </div>
+
+            <!-- 10. RESIDENT EVIL 2 REMAKE -->
+            <div class="game-card">
+                <div class="game-card-top" onclick="toggleDesc(this)">
+                    <div class="game-icon"><img src="https://i.ibb.co/ynJNWDsm/IMG-20260817-025802-887.jpg" alt="RE 2 Remake" loading="lazy"></div>
+                    <div class="game-info">
+                        <div class="name">Resident Evil <span class="highlight">2 Remake</span></div>
+                        <div class="sub">Capcom</div>
+                    </div>
+                    <div class="game-arrow">▼</div>
+                </div>
+                <div class="game-description">
+                    <div class="desc-text"><b>📖 الوصف:</b> الريميك المطور بالكامل للعبة الكلاسيكية الثانية بجرافيك أسطوري.</div>
+                    <div class="emulator-note">⚠️ <strong>ملاحظة:</strong> تعمل اللعبة عبر محاكي <strong>Gamehub</strong>.</div>
+                    <a href="https://gofile.io/d/bs1qhc" target="_blank" class="desc-link">📥 تحميل اللعبة</a>
+                    <a href="https://modsfire.com/T2HbthaY8ma7v6f" target="_blank" class="desc-link emu-link">🎮 تحميل محاكي Gamehub</a>
+                </div>
+            </div>
+
+            <!-- 11. RESIDENT EVIL REVELATIONS -->
+            <div class="game-card">
+                <div class="game-card-top" onclick="toggleDesc(this)">
+                    <div class="game-icon"><img src="https://i.ibb.co/1GKbTD97/IMG-20260817-025814-945.jpg" alt="RE Revelations" loading="lazy"></div>
+                    <div class="game-info">
+                        <div class="name">Resident Evil <span class="highlight">Revelations</span></div>
+                        <div class="sub">Capcom</div>
+                    </div>
+                    <div class="game-arrow">▼</div>
+                </div>
+                <div class="game-description">
+                    <div class="desc-text"><b>📖 الوصف:</b> الأحداث المظلمة على متن سفينة الرعب المهجورة مع جيل فالنتاين.</div>
+                    <div class="emulator-note">⚠️ <strong>ملاحظة:</strong> تعمل اللعبة عبر محاكي <strong>Gamehub</strong>.</div>
+                    <a href="https://gofile.io/d/U0x6yT" target="_blank" class="desc-link">📥 تحميل اللعبة</a>
+                    <a href="https://modsfire.com/T2HbthaY8ma7v6f" target="_blank" class="desc-link emu-link">🎮 تحميل محاكي Gamehub</a>
+                </div>
+            </div>
+
+            <!-- 12. RESIDENT EVIL 3 REMAKE -->
+            <div class="game-card">
+                <div class="game-card-top" onclick="toggleDesc(this)">
+                    <div class="game-icon"><img src="https://i.ibb.co/x9SbsRn/IMG-20260817-025820-522.jpg" alt="RE 3 Remake" loading="lazy"></div>
+                    <div class="game-info">
+                        <div class="name">Resident Evil <span class="highlight">3 Remake</span></div>
+                        <div class="sub">Capcom</div>
+                    </div>
+                    <div class="game-arrow">▼</div>
+                </div>
+                <div class="game-description">
+                    <div class="desc-text"><b>📖 الوصف:</b> إعادة تقديم معركة جيل فالنتاين ضد النيمسيس برسوم وتقنيات حديثة.</div>
+                    <div class="emulator-note">⚠️ <strong>ملاحظة:</strong> تعمل اللعبة عبر محاكي <strong>Gamehub</strong>.</div>
+                    <a href="https://buzzheavier.com/xg2dr04b8dzc" target="_blank" class="desc-link">📥 تحميل اللعبة</a>
+                    <a href="https://modsfire.com/T2HbthaY8ma7v6f" target="_blank" class="desc-link emu-link">🎮 تحميل محاكي Gamehub</a>
+                </div>
+            </div>
+
+            <!-- 13. RESIDENT EVIL 6 -->
+            <div class="game-card">
+                <div class="game-card-top" onclick="toggleDesc(this)">
+                    <div class="game-icon"><img src="https://i.ibb.co/HfnYhsrP/IMG-20260817-025823-505.jpg" alt="RE 6" loading="lazy"></div>
+                    <div class="game-info">
+                        <div class="name">Resident Evil <span class="highlight">6</span></div>
+                        <div class="sub">Capcom</div>
+                    </div>
+                    <div class="game-arrow">▼</div>
+                </div>
+                <div class="game-description">
+                    <div class="desc-text"><b>📖 الوصف:</b> قصص متعددة تجمع ليون، كريس، وجيك مولر في مواجهة تهديد بيولوجي عالمي.</div>
+                    <div class="emulator-note">⚠️ <strong>ملاحظة:</strong> تعمل اللعبة عبر محاكي <strong>Gamehub</strong>.</div>
+                    <a href="https://buzzheavier.com/uww3eogkg4ar" target="_blank" class="desc-link">📥 تحميل اللعبة</a>
+                    <a href="https://modsfire.com/T2HbthaY8ma7v6f" target="_blank" class="desc-link emu-link">🎮 تحميل محاكي Gamehub</a>
+                </div>
+            </div>
+
+            <!-- 14. RESIDENT EVIL SURVIVOR -->
+            <div class="game-card">
+                <div class="game-card-top" onclick="toggleDesc(this)">
+                    <div class="game-icon"><img src="https://i.ibb.co/8LYjLck0/IMG-20260817-025830-135.jpg" alt="RE Survivor" loading="lazy"></div>
+                    <div class="game-info">
+                        <div class="name">Resident Evil <span class="highlight">Survivor</span></div>
+                        <div class="sub">Capcom</div>
+                    </div>
+                    <div class="game-arrow">▼</div>
+                </div>
+                <div class="game-description">
+                    <div class="desc-text"><b>📖 الوصف:</b> تجربة منظور الشخص الأول الكلاسيكية في عالم ريزدنت إيفل.</div>
+                    <a href="https://modsfire.com/8y4UM9juuxmAJYM" target="_blank" class="desc-link">📥 تحميل اللعبة</a>
+                </div>
+            </div>
+
+            <!-- 15. RESIDENT EVIL REVELATIONS 2 -->
+            <div class="game-card">
+                <div class="game-card-top" onclick="toggleDesc(this)">
+                    <div class="game-icon"><img src="https://i.ibb.co/Kkj6nvB/IMG-20260817-025833-716.jpg" alt="RE Revelations 2" loading="lazy"></div>
+                    <div class="game-info">
+                        <div class="name">Resident Evil <span class="highlight">Revelations 2</span></div>
+                        <div class="sub">Capcom</div>
+                    </div>
+                    <div class="game-arrow">▼</div>
+                </div>
+                <div class="game-description">
+                    <div class="desc-text"><b>📖 الوصف:</b> معركة البقاء لكلير ريدفيلد ومويرا بيرتون على جزيرة مهجورة.</div>
+                    <div class="emulator-note">⚠️ <strong>ملاحظة:</strong> تعمل اللعبة عبر محاكي <strong>Eden</strong>.</div>
+                    <a href="https://nswpedia.com/download/resident-evil-revelations-2-5-10225" target="_blank" class="desc-link">?? تحميل اللعبة</a>
+                    <a href="https://modsfire.com/8aHtUa15w3freea" target="_blank" class="desc-link emu-link">🎮 تحميل محاكي Eden</a>
+                </div>
+            </div>
+
+            <!-- 16. RESIDENT EVIL 8 -->
+            <div class="game-card">
+                <div class="game-card-top" onclick="toggleDesc(this)">
+                    <div class="game-icon"><img src="https://i.ibb.co/y2LD0Cz/IMG-20260817-025837-276.jpg" alt="RE Village" loading="lazy"></div>
+                    <div class="game-info">
+                        <div class="name">Resident Evil <span class="highlight">8 Village</span></div>
+                        <div class="sub">Capcom</div>
+                    </div>
+                    <div class="game-arrow">▼</div>
+                </div>
+                <div class="game-description">
+                    <div class="desc-text"><b>📖 الوصف:</b> رحلة إيثان وينترز الأخيرة في القرية المرعبة لإنقاذ ابنتهم.</div>
+                    <div class="emulator-note">⚠️ <strong>ملاحظة:</strong> تعمل اللعبة عبر محاكي <strong>Gamehub</strong>.</div>
+                    <a href="https://gofile.io/d/iM1peV" target="_blank" class="desc-link">📥 تحميل اللعبة</a>
+                    <a href="https://modsfire.com/T2HbthaY8ma7v6f" target="_blank" class="desc-link emu-link">🎮 تحميل محاكي Gamehub</a>
+                </div>
+            </div>
+
+            <!-- 17. RESIDENT EVIL MERCENARIES -->
+            <div class="game-card">
+                <div class="game-card-top" onclick="toggleDesc(this)">
+                    <div class="game-icon"><img src="https://i.ibb.co/43BhbRF/IMG-20260817-025840-781.jpg" alt="RE Mercenaries" loading="lazy"></div>
+                    <div class="game-info">
+                        <div class="name">Resident Evil <span class="highlight">The Mercenaries</span></div>
+                        <div class="sub">Capcom</div>
+                    </div>
+                    <div class="game-arrow">▼</div>
+                </div>
+                <div class="game-description">
+                    <div class="desc-text"><b>📖 الوصف:</b> طور المرتزقة المليء بالحماس والتحديات والسريعة.</div>
+                    <div class="emulator-note">⚠️ <strong>ملاحظة:</strong> تعمل اللعبة عبر محاكي <strong>Azahar</strong>.</div>
+                    <a href="https://modsfire.com/h9Q5qhQ9D4a1403" target="_blank" class="desc-link">📥 تحميل اللعبة</a>
+                    <a href="https://modsfire.com/08ethcgR8Wpeb45" target="_blank" class="desc-link emu-link">🎮 تحميل محاكي Azahar</a>
+                </div>
+            </div>
+
+            <!-- 18. RESIDENT EVIL MOBILE EDITION -->
+            <div class="game-card">
+                <div class="game-card-top" onclick="toggleDesc(this)">
+                    <div class="game-icon"><img src="https://i.ibb.co/bM3JFjFs/IMG-20260817-025902-654.jpg" alt="RE Mobile" loading="lazy"></div>
+                    <div class="game-info">
+                        <div class="name">Resident Evil <span class="highlight">Mobile Edition</span></div>
+                        <div class="sub">Capcom</div>
+                    </div>
+                    <div class="game-arrow">▼</div>
+                </div>
+                <div class="game-description">
+                    <div class="desc-text"><b>📖 الوصف:</b> نسخة الموبايل المخصصة للهواتف.</div>
+                    <a href="https://modsfire.com/4Ll7kLw61P05v2e" target="_blank" class="desc-link">📥 تحميل اللعبة</a>
+                </div>
+            </div>
+
+            <div class="footer-tarantul">
+                <div class="brand-small">MUSTAFA GAMERS • 2026</div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function toggleDesc(element) {
+            const card = element.closest('.game-card');
+            const desc = card.querySelector('.game-description');
+            const arrow = card.querySelector('.game-arrow');
+
+            document.querySelectorAll('.game-description.open').forEach(function(el) {
+                if (el !== desc) {
+                    el.classList.remove('open');
+                    el.closest('.game-card').querySelector('.game-arrow').textContent = '▼';
+                }
+            });
+
+            if (desc.classList.contains('open')) {
+                desc.classList.remove('open');
+                arrow.textContent = '▼';
+            } else {
+                desc.classList.add('open');
+                arrow.textContent = '▲';
+            }
+        }
+    </script>
+</body>
+</html>
